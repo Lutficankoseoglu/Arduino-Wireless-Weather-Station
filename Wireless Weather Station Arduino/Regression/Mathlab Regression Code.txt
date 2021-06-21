@@ -1,0 +1,36 @@
+% define our Channel ID and Read API Key.
+readChannelID = 1325367; 
+readAPIKey = 'IOEIT732MPLVQB27'; 
+
+% define date range from yesterday to today.
+startDate = datetime('yesterday');
+endDate = datetime('today');
+dateRange = startDate:endDate;
+
+% collect the data from our thingspeak channel.
+data = thingSpeakRead(readChannelID,'Fields',[1,2,5],'DateRange',dateRange, 'ReadKey', readAPIKey);
+
+% x line will be our Temperature values and y line will be our pressure values.
+x = data(:,1);
+y = data(:,3);
+
+% the polyfit function will generate the 4th degree polynomial equation between our data.
+p = polyfit(x,y,4);
+
+% the polyval function generates the result of our polynomial for each value of x.
+f = polyval(p,x);
+
+% plot our values ​​and our polynomial.
+plot(x,y,'o',x,f,'-')
+
+% print which sign belongs to which, to distinguish the polynomial and our data.
+legend('Temp data','4. degree polynomial fit')
+
+% print the label names and graph title.
+xlabel('Temperature','FontSize',10,'FontName','Times New Roman')
+ylabel('Pressure','FontSize',10,'FontName','Times New Roman')
+title('Weather Forecast Line','FontSize',10,'FontName','Times New Roman')
+
+% print the forecast results.
+fprintf('if the line is decreasing : Weather will be bad than today.\n')
+fprintf('if the line is increasing : Weather will be better than or same with today.')
